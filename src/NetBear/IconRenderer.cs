@@ -20,6 +20,7 @@ internal static unsafe class IconRenderer
         nint screen = GetDC(0);
         nint color = CreateDIBSection(screen, &header, 0, &bits, 0, 0);
         ReleaseDC(0, screen);
+        if (color == 0 || bits == null) return 0;
 
         var pixels = new Span<uint>(bits, size * size);
         for (int y = 0; y < size; y++)
@@ -38,9 +39,9 @@ internal static unsafe class IconRenderer
         fixed (byte* m = maskBits) mask = CreateBitmap(size, size, 1, 1, m);
 
         var info = new ICONINFO { fIcon = 1, hbmMask = mask, hbmColor = color };
-        nint icon = CreateIconIndirect(&info);
+        nint icon = mask == 0 ? 0 : CreateIconIndirect(&info);
         DeleteObject(color);
-        DeleteObject(mask);
-        return icon;
+        if (mask != 0) DeleteObject(mask);
+        return icon; // 0 si falló
     }
 }

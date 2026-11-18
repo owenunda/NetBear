@@ -66,7 +66,9 @@ internal sealed unsafe class TrayIcon : IDisposable
     {
         var speed = _monitor.Update();
         bool connected = NetSpeedMonitor.IsConnected();
-        _state = BearAnimator.GetState(connected, speed.Total);
+        var state = BearAnimator.GetState(connected, speed.Total);
+        if (state != _state) _frame = 0;
+        _state = state;
         _speedText = connected
             ? $"↓ {SpeedFormatter.Format(speed.DownBps)}  ↑ {SpeedFormatter.Format(speed.UpBps)}"
             : "Sin conexión";
@@ -84,7 +86,11 @@ internal sealed unsafe class TrayIcon : IDisposable
         var frames = Sprites.For(_state);
         var frame = frames[_frame % frames.Length];
         if (!_icons.TryGetValue(frame, out nint icon))
-            _icons[frame] = icon = IconRenderer.Create(frame, Sprites.Palette(_lightTaskbar), _iconSize);
+        {
+            icon = IconRenderer.Create(frame, Sprites.Palette(_lightTaskbar), _iconSize);
+            if (icon == 0) return; // no se cachea: se conserva el icono anterior
+            _icons[frame] = icon;
+        }
 
         var data = new NOTIFYICONDATAW
         {
@@ -97,7 +103,8 @@ internal sealed unsafe class TrayIcon : IDisposable
         };
         string tip = "NetBear\n" + _speedText;
         tip.AsSpan(0, Math.Min(tip.Length, 127)).CopyTo(new Span<char>(data.szTip, 128));
-        Shell_NotifyIconW(message, &data);
+        // Si el NIM_ADD inicial falla (shell aún no listo al iniciar sesión), el siguiente tick de 1 s lo reintenta.
+        if (!Shell_NotifyIconW(message, &data) && message == NIM_MODIFY) Shell_NotifyIconW(NIM_ADD, &data);
     }
 
     void RemoveIcon()
@@ -132,7 +139,10 @@ internal sealed unsafe class TrayIcon : IDisposable
 
         switch (command)
         {
-            case CmdAutostart: Autostart.Set(!Autostart.IsEnabled()); break;
+            case CmdAutostart:
+                try { Autostart.Set(!Autostart.IsEnabled()); }
+                catch (Exception) { } // el estado queda como estaba
+                break;
             case CmdGitHub: ShellExecuteW(0, "open", GitHubUrl, null, null, SW_SHOWNORMAL); break;
             case CmdExit: DestroyWindow(_hwnd); break;
         }
@@ -144,30 +154,41 @@ internal sealed unsafe class TrayIcon : IDisposable
         // Durante CreateWindowExW todavía no hay _hwnd asignado: esos mensajes van al manejo por defecto.
         if (s_instance is { } self && self._hwnd == hwnd)
         {
-            switch (msg)
+            // Una excepción que escapa de un UnmanagedCallersOnly mata el proceso: se traga.
+            try
             {
-                case WM_TIMER when (nuint)wParam == SampleTimerId:
-                    self.Refresh();
-                    self.Notify(NIM_MODIFY);
+                switch (msg)
+                {
+                    case WM_TIMER when (nuint)wParam == SampleTimerId:
+                        self.Refresh();
+                        self.Notify(NIM_MODIFY);
+                        return 0;
+                    case WM_TIMER when (nuint)wParam == FrameTimerId:
+                        self._frame = (self._frame + 1) % 60; // 60 = mcm de 2, 12 y 5 cuadros
+                        self.Notify(NIM_MODIFY);
+                        return 0;
+                    case TrayCallback when (uint)(lParam & 0xFFFF) == WM_RBUTTONUP:
+                        self.ShowMenu();
+                        return 0;
+                    case WM_SETTINGCHANGE when lParam != 0 && new string((char*)lParam) == "ImmersiveColorSet":
+                        self.ReloadTheme();
+                        return 0;
+                    case WM_ENDSESSION when wParam != 0: // Restart Manager (instalador) pide cerrar
+                        DestroyWindow(hwnd);
+                        return 0;
+                    case WM_DESTROY:
+                        self.RemoveIcon();
+                        PostQuitMessage(0);
+                        return 0;
+                }
+                if (msg == s_taskbarCreated) // el Explorador se reinició: hay que volver a agregar el icono
+                {
+                    self.Notify(NIM_ADD);
                     return 0;
-                case WM_TIMER when (nuint)wParam == FrameTimerId:
-                    self._frame++;
-                    self.Notify(NIM_MODIFY);
-                    return 0;
-                case TrayCallback when (uint)(lParam & 0xFFFF) == WM_RBUTTONUP:
-                    self.ShowMenu();
-                    return 0;
-                case WM_SETTINGCHANGE when lParam != 0 && new string((char*)lParam) == "ImmersiveColorSet":
-                    self.ReloadTheme();
-                    return 0;
-                case WM_DESTROY:
-                    self.RemoveIcon();
-                    PostQuitMessage(0);
-                    return 0;
+                }
             }
-            if (msg == s_taskbarCreated) // el Explorador se reinició: hay que volver a agregar el icono
+            catch (Exception)
             {
-                self.Notify(NIM_ADD);
                 return 0;
             }
         }

@@ -4,7 +4,7 @@ namespace NetBear;
 
 internal static unsafe partial class Native
 {
-    public const uint WM_NULL = 0x0000, WM_DESTROY = 0x0002, WM_SETTINGCHANGE = 0x001A,
+    public const uint WM_NULL = 0x0000, WM_DESTROY = 0x0002, WM_ENDSESSION = 0x0016, WM_SETTINGCHANGE = 0x001A,
         WM_TIMER = 0x0113, WM_RBUTTONUP = 0x0205, WM_APP = 0x8000;
     public const uint NIM_ADD = 0, NIM_MODIFY = 1, NIM_DELETE = 2;
     public const uint NIF_MESSAGE = 0x1, NIF_ICON = 0x2, NIF_TIP = 0x4;
