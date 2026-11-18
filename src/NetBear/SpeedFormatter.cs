@@ -8,12 +8,13 @@ internal static class SpeedFormatter
 
     public static string Format(double bytesPerSecond)
     {
-        if (bytesPerSecond < 1024)
-            return $"{(long)Math.Max(0, bytesPerSecond)} B/s";
+        double bps = double.IsNaN(bytesPerSecond) ? 0 : Math.Max(0, bytesPerSecond);
+        if (!(bps >= 1024))
+            return $"{(long)bps} B/s";
 
-        double value = bytesPerSecond / 1024;
+        double value = bps / 1024;
         int unit = 0;
-        while (value >= 1024 && unit < Units.Length - 1)
+        while (Math.Round(value, 1) >= 1024 && unit < Units.Length - 1)
         {
             value /= 1024;
             unit++;
