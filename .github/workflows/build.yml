@@ -1,0 +1,53 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Tests
+        run: dotnet test
+
+      - name: Version
+        shell: pwsh
+        run: |
+          $version = if ('${{ github.ref_type }}' -eq 'tag') { '${{ github.ref_name }}'.TrimStart('v') } else { '0.0.0' }
+          "NETBEAR_VERSION=$version" >> $env:GITHUB_ENV
+
+      - name: Publish (Native AOT)
+        run: dotnet publish src/NetBear/NetBear.csproj -c Release -r win-x64 -o artifacts/publish -p:Version=${{ env.NETBEAR_VERSION }}
+
+      - name: Portable zip
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        run: Compress-Archive -Path artifacts/publish/NetBear.exe -DestinationPath artifacts/NetBear-portable.zip
+
+      - name: Installer
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        run: |
+          choco install innosetup -y --no-progress
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" installer/NetBear.iss
+
+      - name: Release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/NetBearSetup.exe
+            artifacts/NetBear-portable.zip
