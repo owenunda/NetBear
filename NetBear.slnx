@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/NetBear/NetBear.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/NetBear.Tests/NetBear.Tests.csproj" />
+  </Folder>
+</Solution>
