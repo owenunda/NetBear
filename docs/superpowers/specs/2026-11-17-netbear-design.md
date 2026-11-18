@@ -39,7 +39,7 @@ que corre más rápido cuanto mayor es el tráfico de internet (al estilo RunCat
 | Condición                                 | Estado        | Animación                                 |
 |-------------------------------------------|---------------|-------------------------------------------|
 | `NetworkInterface.GetIsNetworkAvailable()` es false | Hibernando | 2 cuadros con zZz, 500 ms por cuadro      |
-| Descarga + subida < 10 KB/s               | Sentado       | 1 cuadro base; parpadeo ocasional        |
+| Descarga + subida < 10 KB/s               | Quieto (de pie) | Cuadros de 250 ms; parpadea 1 de cada 12 (~cada 3 s) |
 | Descarga + subida ≥ 10 KB/s               | Corriendo     | 5 cuadros, intervalo según la velocidad   |
 
 Intervalo de carrera según el total `t` en bytes/s, con escala logarítmica:
@@ -84,8 +84,8 @@ Intervalo de carrera según el total `t` en bytes/s, con escala logarítmica:
 ```
 NetBear/
   src/NetBear/
-    Program.cs          entrada, mutex, bucle de mensajes, timers
-    TrayIcon.cs         ventana oculta, Shell_NotifyIcon, menú, TaskbarCreated
+    Program.cs          entrada y mutex de instancia única
+    TrayIcon.cs         ventana oculta, bucle de mensajes, timers, Shell_NotifyIcon, menú, TaskbarCreated
     NetSpeedMonitor.cs  muestreo de bytes y cálculo de velocidades
     BearAnimator.cs     estado + intervalo de cuadro (lógica pura)
     SpeedFormatter.cs   formateo de velocidades (lógica pura)
@@ -96,15 +96,16 @@ NetBear/
     Native.cs           declaraciones P/Invoke
   tests/NetBear.Tests/  xUnit
   installer/NetBear.iss Inno Setup
-  .github/workflows/release.yml
+  .github/workflows/build.yml
   README.md, LICENSE (MIT)
 ```
 
 ## Distribución
 
-- Workflow `release.yml`, disparado por tags `v*` en `windows-latest`:
-  ejecuta los tests → `dotnet publish -c Release -r win-x64` (AOT) → genera
-  `NetBear-portable.zip` → compila `NetBearSetup.exe` con Inno Setup → crea la GitHub Release.
+- Workflow `build.yml` en `windows-latest`. En cada push o PR a `main`: tests + `dotnet publish -c Release -r win-x64` (AOT),
+  para detectar pronto problemas de AOT que no se pueden compilar localmente. En tags `v*`, además genera
+  `NetBear-portable.zip`, compila `NetBearSetup.exe` con Inno Setup y crea la GitHub Release.
+- Repositorio público asumido: `https://github.com/owenunda/NetBear` (constante única en `TrayIcon.cs` y en el `.iss`).
 - El instalador: instala por usuario (sin admin) en `{localappdata}\Programs\NetBear`, crea
   un acceso directo en el menú Inicio, ofrece la tarea "Iniciar con Windows" (marcada por defecto,
   escribe la misma clave Run que usa la app) y aparece en Agregar o quitar programas.
