@@ -38,7 +38,11 @@ internal sealed class NetSpeedMonitor
     {
         var current = Sample();
         long now = Stopwatch.GetTimestamp();
-        var speed = SpeedCalculator.Compute(_previous, current, Stopwatch.GetElapsedTime(_previousTimestamp, now).TotalSeconds);
+        double elapsed = Stopwatch.GetElapsedTime(_previousTimestamp, now).TotalSeconds;
+        // La primera llamada ocurre unas decenas de ms después de la muestra inicial: con un intervalo
+        // tan corto la velocidad sale disparatada. Se descarta sin mover la línea base.
+        if (elapsed < 0.5) return default;
+        var speed = SpeedCalculator.Compute(_previous, current, elapsed);
         _previous = current;
         _previousTimestamp = now;
         return speed;
@@ -51,7 +55,7 @@ internal sealed class NetSpeedMonitor
         var counters = new Dictionary<string, (long Rx, long Tx)>();
         NetworkInterface[] adapters;
         try { adapters = NetworkInterface.GetAllNetworkInterfaces(); }
-        catch (NetworkInformationException) { return counters; }
+        catch (Exception) { return counters; }
 
         foreach (var adapter in adapters)
         {
@@ -62,7 +66,7 @@ internal sealed class NetSpeedMonitor
                 var stats = adapter.GetIPStatistics();
                 counters[adapter.Id] = (stats.BytesReceived, stats.BytesSent);
             }
-            catch (NetworkInformationException) { } // se ignora este adaptador en esta muestra
+            catch (Exception) { } // se ignora este adaptador en esta muestra
         }
         return counters;
     }
