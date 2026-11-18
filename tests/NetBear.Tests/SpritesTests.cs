@@ -37,6 +37,17 @@ public class SpritesTests
     }
 
     [Fact]
+    public void LastIdleFrameBlinksDifferentlyFromFirst()
+    {
+        var idle = Sprites.For(BearState.Idle);
+        Assert.NotEqual(string.Concat(idle[0]), string.Concat(idle[11]));
+    }
+
+    [Fact]
+    public void LastIdleFrameHasNoEyePixel() =>
+        Assert.DoesNotContain('E', string.Concat(Sprites.For(BearState.Idle)[11]));
+
+    [Fact]
     public void PalettesDefineTheSameCharacters() =>
         Assert.Equal(Sprites.Palette(false).Keys.Order(), Sprites.Palette(true).Keys.Order());
 }

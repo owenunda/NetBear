@@ -25,7 +25,8 @@ internal static class Sprites
         ".OBBOOOOOOBBO...",
     ];
 
-    static readonly string[] BlinkingBody = [.. Body[..6], ".OBBBBBBBBBBBOBO", .. Body[7..]];
+    // Parpadeo: el ojo (fila 6) desaparece y queda solo pelaje.
+    static readonly string[] BlinkingBody = [.. Body[..6], ".OBBBBBBBBBBBBBO", .. Body[7..]];
 
     static string[] WithLegs(string[] body, string upper, string lower) => [.. body, upper, lower, Empty, Empty];
 
