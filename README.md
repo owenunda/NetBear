@@ -18,6 +18,13 @@ Descarga la última versión desde [Releases](https://github.com/owenunda/NetBea
 
 Requiere Windows 10/11 de 64 bits.
 
+Como la app todavía no está firmada, Windows SmartScreen puede mostrar "Windows protegió tu PC": elige "Más información → Ejecutar de todas formas".
+
+## Limitaciones
+
+- Con adaptadores como vEthernet de Hyper-V/WSL o VPN que Windows reporta como conectados, el oso puede no hibernar.
+- "Sin conexión" solo significa que no hay ninguna red conectada, no que el router tenga internet.
+
 ## Desarrollo
 
 Necesitas el [SDK de .NET 10](https://dotnet.microsoft.com/download).
