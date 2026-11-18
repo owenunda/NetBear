@@ -29,7 +29,8 @@ que corre más rápido cuanto mayor es el tráfico de internet (al estilo RunCat
 ### Medición
 
 - Cada 1 s se suman los bytes recibidos y enviados de las interfaces activas
-  (`OperationalStatus.Up`), excluyendo loopback y túneles.
+  (`OperationalStatus.Up`) que tienen puerta de enlace, excluyendo loopback y túneles. Los adaptadores
+  virtuales sin gateway (Hyper-V, WSL, Tailscale) no cuentan: su tráfico ya pasa por el adaptador físico.
 - La velocidad es la diferencia con la muestra anterior, dividida por el tiempo transcurrido real.
 - Si un contador baja (por reconexión del adaptador), la diferencia de ese adaptador cuenta como 0.
 - Si leer un adaptador lanza una excepción, ese adaptador se ignora en esa muestra.
@@ -38,7 +39,7 @@ que corre más rápido cuanto mayor es el tráfico de internet (al estilo RunCat
 
 | Condición                                 | Estado        | Animación                                 |
 |-------------------------------------------|---------------|-------------------------------------------|
-| `NetworkInterface.GetIsNetworkAvailable()` es false | Hibernando | 2 cuadros con zZz, 500 ms por cuadro      |
+| Ningún adaptador activo con puerta de enlace | Hibernando | 2 cuadros con zZz, 500 ms por cuadro      |
 | Descarga + subida < 10 KB/s               | Quieto (de pie) | Cuadros de 250 ms; parpadea 1 de cada 12 (~cada 3 s) |
 | Descarga + subida ≥ 10 KB/s               | Corriendo     | 5 cuadros, intervalo según la velocidad   |
 

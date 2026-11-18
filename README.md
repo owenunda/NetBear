@@ -22,8 +22,8 @@ Como la app todavía no está firmada, Windows SmartScreen puede mostrar "Window
 
 ## Limitaciones
 
-- Con adaptadores como vEthernet de Hyper-V/WSL o VPN que Windows reporta como conectados, el oso puede no hibernar.
-- "Sin conexión" solo significa que no hay ninguna red conectada, no que el router tenga internet.
+- "Sin conexión" significa que ningún adaptador tiene puerta de enlace (los virtuales de Hyper-V, WSL o Tailscale no cuentan). Si estás conectado al WiFi pero el router no tiene internet, el oso no hiberna: se queda quieto.
+- El anclaje USB del celular cuenta como conexión real.
 
 ## Desarrollo
 

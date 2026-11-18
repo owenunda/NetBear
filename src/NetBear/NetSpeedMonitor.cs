@@ -48,19 +48,13 @@ internal sealed class NetSpeedMonitor
         return speed;
     }
 
-    public static bool IsConnected() => NetworkInterface.GetIsNetworkAvailable();
+    public static bool IsConnected() => InternetAdapters().Count > 0;
 
     static Dictionary<string, (long Rx, long Tx)> Sample()
     {
         var counters = new Dictionary<string, (long Rx, long Tx)>();
-        NetworkInterface[] adapters;
-        try { adapters = NetworkInterface.GetAllNetworkInterfaces(); }
-        catch (Exception) { return counters; }
-
-        foreach (var adapter in adapters)
+        foreach (var adapter in InternetAdapters())
         {
-            if (adapter.OperationalStatus != OperationalStatus.Up) continue;
-            if (adapter.NetworkInterfaceType is NetworkInterfaceType.Loopback or NetworkInterfaceType.Tunnel) continue;
             try
             {
                 var stats = adapter.GetIPStatistics();
@@ -69,5 +63,27 @@ internal sealed class NetSpeedMonitor
             catch (Exception) { } // se ignora este adaptador en esta muestra
         }
         return counters;
+    }
+
+    // Solo cuentan los adaptadores con puerta de enlace: los virtuales (Hyper-V, WSL, Tailscale) no tienen,
+    // así que no mantienen al oso "conectado" sin internet ni duplican el tráfico que ya pasa por el físico.
+    static List<NetworkInterface> InternetAdapters()
+    {
+        var result = new List<NetworkInterface>();
+        NetworkInterface[] adapters;
+        try { adapters = NetworkInterface.GetAllNetworkInterfaces(); }
+        catch (Exception) { return result; }
+
+        foreach (var adapter in adapters)
+        {
+            if (adapter.OperationalStatus != OperationalStatus.Up) continue;
+            if (adapter.NetworkInterfaceType is NetworkInterfaceType.Loopback or NetworkInterfaceType.Tunnel) continue;
+            try
+            {
+                if (adapter.GetIPProperties().GatewayAddresses.Count > 0) result.Add(adapter);
+            }
+            catch (Exception) { } // se ignora este adaptador
+        }
+        return result;
     }
 }
