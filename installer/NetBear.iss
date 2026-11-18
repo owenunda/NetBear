@@ -1,4 +1,8 @@
 #define AppVersion GetEnv("NETBEAR_VERSION")
+#if AppVersion == ""
+  #undef AppVersion
+  #define AppVersion "0.0.0"
+#endif
 
 [Setup]
 AppId={{8F3C2A71-5B4E-4D2A-9C61-3E7B0D4A9F12}
