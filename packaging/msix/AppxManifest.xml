@@ -11,14 +11,14 @@
   IgnorableNamespaces="uap desktop rescap">
 
   <Identity
-    Name="PENDIENTE.NetBear"
-    Publisher="CN=PENDIENTE"
+    Name="oween.NetBear"
+    Publisher="CN=953A1B9F-638C-4074-B374-A9E5FA70080F"
     Version="$version$"
     ProcessorArchitecture="x64" />
 
   <Properties>
     <DisplayName>NetBear</DisplayName>
-    <PublisherDisplayName>PENDIENTE</PublisherDisplayName>
+    <PublisherDisplayName>oween</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
