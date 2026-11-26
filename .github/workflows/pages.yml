@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
     paths: ['site/**', '.github/workflows/pages.yml']
+  # Las releases las crea build con GITHUB_TOKEN, y eso no dispara el evento release: se escucha a build.
+  workflow_run:
+    workflows: [build]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -17,12 +21,28 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+
+      # Microsoft Store pide una URL fija por versión y sin redirecciones; las de GitHub Releases redirigen.
+      # Cada instalador queda en /downloads/<versión>/NetBearSetup.exe.
+      - name: Instaladores de las releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for tag in $(gh release list --repo "$GITHUB_REPOSITORY" --limit 100 --json tagName --jq '.[].tagName'); do
+            dir="site/downloads/${tag#v}"
+            mkdir -p "$dir"
+            gh release download "$tag" --repo "$GITHUB_REPOSITORY" --pattern NetBearSetup.exe --dir "$dir" \
+              || echo "::warning::$tag no tiene NetBearSetup.exe"
+          done
+          find site/downloads -type f
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
