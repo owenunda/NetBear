@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NetBear · A bear that runs with your internet</title>
+  <meta name="description" content="NetBear is a pixel-art bear that lives in the Windows system tray and runs at the speed of your internet. Free, open source and it sends no data.">
+  <link rel="alternate" hreflang="es" href="../">
+  <link rel="alternate" hreflang="en" href="./">
+  <link rel="icon" href="../assets/favicon.ico" sizes="48x48">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+  <link rel="manifest" href="../assets/site.webmanifest">
+  <meta name="theme-color" content="#12100f">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="./"><img src="../assets/logo.svg" alt="">NetBear</a>
+      <ul>
+        <li class="wide"><a href="#states">How it works</a></li>
+        <li><a href="privacy/">Privacy</a></li>
+        <li><a href="support/">Support</a></li>
+        <li class="lang"><a href="../" hreflang="es" lang="es" aria-label="Español"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="3" height="1" fill="#FCD116"/><rect y="1" width="3" height=".5" fill="#003893"/><rect y="1.5" width="3" height=".5" fill="#CE1126"/></svg><span>ES</span></a><a href="./" hreflang="en" lang="en" aria-label="English" aria-current="true"><svg class="flag" viewBox="0 0 19 13" preserveAspectRatio="none" aria-hidden="true"><rect width="19" height="13" fill="#B22234"/><rect y="1" width="19" height="1" fill="#fff"/><rect y="3" width="19" height="1" fill="#fff"/><rect y="5" width="19" height="1" fill="#fff"/><rect y="7" width="19" height="1" fill="#fff"/><rect y="9" width="19" height="1" fill="#fff"/><rect y="11" width="19" height="1" fill="#fff"/><rect width="7.6" height="7" fill="#3C3B6E"/></svg><span>EN</span></a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div class="wrap">
+        <div class="rise">
+          <h1>A bear in your tray that runs with your internet</h1>
+          <p class="lede">NetBear lives next to the Windows clock. It runs faster the faster you download, stands still when there's no traffic and hibernates when you go offline.</p>
+          <div class="actions">
+            <a class="btn primary" href="#download">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 10l5 5 5-5M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+              Download for Windows
+            </a>
+            <a class="btn" href="https://github.com/owenunda/NetBear">View the code</a>
+          </div>
+          <p class="meta">Free · Windows 10 and 11 · Open source (MIT)</p>
+        </div>
+
+        <figure class="stage rise d1" style="margin:0" aria-label="NetBear simulated on the taskbar">
+          <div class="zoom">
+            <span class="label">16 × 16 px, zoomed in</span>
+            <canvas id="big" width="16" height="16" role="img" aria-label="The NetBear bear"></canvas>
+          </div>
+          <div class="taskbar">
+            <div class="tooltip" id="tip" aria-live="polite">↓ 4.2 MB/s  ↑ 310.0 KB/s</div>
+            <span class="tray-item" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span>
+            <span class="tray-item is-bear"><canvas id="small" width="16" height="16" aria-hidden="true"></canvas></span>
+            <span class="tray-item" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h.01M2 8.82a15 15 0 0 1 20 0M5 12.86a10 10 0 0 1 14 0M8.5 16.43a5 5 0 0 1 7 0"/></svg></span>
+            <span class="tray-item" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5zM16 9a5 5 0 0 1 0 6M19.4 18.4a9 9 0 0 0 0-12.8"/></svg></span>
+            <span class="clock" aria-hidden="true">9:47 PM<br>11/26/2026</span>
+          </div>
+          <div class="controls">
+            <label for="speed">Simulated speed</label>
+            <input id="speed" type="range" min="0" max="1000" value="640">
+            <output id="speedOut" for="speed">4.5 MB/s</output>
+            <button class="btn toggle" id="offline" type="button" aria-pressed="false">Offline</button>
+          </div>
+        </figure>
+      </div>
+    </div>
+
+    <section id="states">
+      <div class="wrap">
+        <h2>Three states, nothing more</h2>
+        <p class="section-lede">Every second NetBear measures the bytes going through your network adapters and picks how the bear moves. Hover over it to see download and upload speed.</p>
+        <ul class="states">
+          <li>
+            <canvas class="mini" data-bps="2000000" width="16" height="16" aria-hidden="true"></canvas>
+            <div><h3>Runs</h3><p>There's traffic. The faster you download, the faster it runs.</p></div>
+            <span class="rule">from 10 KB/s</span>
+          </li>
+          <li>
+            <canvas class="mini" data-bps="2000" width="16" height="16" aria-hidden="true"></canvas>
+            <div><h3>Stands still</h3><p>Barely any traffic. It waits and blinks now and then.</p></div>
+            <span class="rule">under 10 KB/s</span>
+          </li>
+          <li>
+            <canvas class="mini" data-offline width="16" height="16" aria-hidden="true"></canvas>
+            <div><h3>Hibernates</h3><p>No adapter has a default gateway, so there's no connection.</p></div>
+            <span class="rule">offline</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Built to stay out of the way</h2>
+        <p class="section-lede">One tray icon and a menu with three options. No windows, no accounts, nothing to set up.</p>
+        <dl class="facts">
+          <div><dt>Size</dt><dd>A single <code style="font:14px var(--mono)">.exe</code>, no runtime to install</dd></div>
+          <div><dt>Permissions</dt><dd>Doesn't ask for administrator rights</dd></div>
+          <div><dt>Privacy</dt><dd>Sends no data to any server. <a href="privacy/">Privacy policy</a></dd></div>
+          <div><dt>Startup</dt><dd>Can start with Windows, if you turn it on</dd></div>
+          <div><dt>Requirements</dt><dd>Windows 10 or 11, 64-bit</dd></div>
+          <div><dt>Code</dt><dd>Open source, MIT license</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section id="download">
+      <div class="wrap">
+        <h2>Download</h2>
+        <p class="section-lede">Both options install the same bear. Pick the one you like.</p>
+        <div class="download">
+          <a class="option" href="https://github.com/owenunda/NetBear/releases/latest/download/NetBearSetup.exe">
+            <strong>Installer</strong>
+            <span>Adds it to the Start menu and, if you want, starts it with Windows</span>
+            <code>NetBearSetup.exe</code>
+          </a>
+          <a class="option" href="https://github.com/owenunda/NetBear/releases/latest/download/NetBear-portable.zip">
+            <strong>Portable</strong>
+            <span>Just the executable. Unzip it and open it</span>
+            <code>NetBear-portable.zip</code>
+          </a>
+        </div>
+        <p class="note">The installer is in Spanish for now. If Windows SmartScreen shows "Windows protected your PC", choose "More info" and then "Run anyway".</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>NetBear · MIT license</span>
+      <nav>
+        <a href="privacy/">Privacy</a>
+        <a href="support/">Support</a>
+        <a href="https://github.com/owenunda/NetBear">GitHub</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { bear, formatSpeed } from "../assets/bear.js";
+
+    const hero = bear([document.getElementById("big"), document.getElementById("small")]);
+    const speed = document.getElementById("speed");
+    const out = document.getElementById("speedOut");
+    const tip = document.getElementById("tip");
+    const offline = document.getElementById("offline");
+
+    // The slider goes from 1 KB/s to 100 MB/s on a log scale.
+    function update() {
+      const connected = offline.getAttribute("aria-pressed") !== "true";
+      const total = 1024 * 10 ** (speed.value / 1000 * 5);
+      out.textContent = formatSpeed(total);
+      speed.disabled = !connected;
+      // The real app's tooltip is in Spanish: "Sin conexión" when offline.
+      tip.textContent = connected
+        ? `↓ ${formatSpeed(total * 0.93)}  ↑ ${formatSpeed(total * 0.07)}`
+        : "Sin conexión";
+      hero.set({ connected, bps: total });
+    }
+
+    speed.addEventListener("input", update);
+    offline.addEventListener("click", () => {
+      offline.setAttribute("aria-pressed", String(offline.getAttribute("aria-pressed") !== "true"));
+      update();
+    });
+    update();
+
+    document.querySelectorAll("canvas.mini").forEach((c) =>
+      bear([c], { connected: !c.hasAttribute("data-offline"), bps: Number(c.dataset.bps || 0) }));
+  </script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Support · NetBear</title>
+  <meta name="description" content="NetBear technical support: contact, how to report a problem and frequently asked questions.">
+  <link rel="alternate" hreflang="es" href="../../soporte/">
+  <link rel="alternate" hreflang="en" href="./">
+  <link rel="icon" href="../../assets/favicon.ico" sizes="48x48">
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="manifest" href="../../assets/site.webmanifest">
+  <meta name="theme-color" content="#12100f">
+  <link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="../"><img src="../../assets/logo.svg" alt="">NetBear</a>
+      <ul>
+        <li><a href="../privacy/">Privacy</a></li>
+        <li><a href="./" aria-current="page">Support</a></li>
+        <li class="lang"><a href="../../soporte/" hreflang="es" lang="es" aria-label="Español"><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="3" height="1" fill="#FCD116"/><rect y="1" width="3" height=".5" fill="#003893"/><rect y="1.5" width="3" height=".5" fill="#CE1126"/></svg><span>ES</span></a><a href="./" hreflang="en" lang="en" aria-label="English" aria-current="true"><svg class="flag" viewBox="0 0 19 13" preserveAspectRatio="none" aria-hidden="true"><rect width="19" height="13" fill="#B22234"/><rect y="1" width="19" height="1" fill="#fff"/><rect y="3" width="19" height="1" fill="#fff"/><rect y="5" width="19" height="1" fill="#fff"/><rect y="7" width="19" height="1" fill="#fff"/><rect y="9" width="19" height="1" fill="#fff"/><rect y="11" width="19" height="1" fill="#fff"/><rect width="7.6" height="7" fill="#3C3B6E"/></svg><span>EN</span></a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="doc">
+    <div class="wrap">
+      <h1>Support</h1>
+      <p class="updated">NetBear is maintained by one person. I reply as soon as I can</p>
+
+      <div class="contact">
+        <a class="option" href="https://github.com/owenunda/NetBear/issues/new">
+          <strong>Report a problem</strong>
+          <span>Open an issue on GitHub. It's the fastest way and helps others with the same problem</span>
+          <code>github.com/owenunda/NetBear/issues</code>
+        </a>
+        <a class="option" href="mailto:owenunda@gmail.com?subject=NetBear%20support">
+          <strong>Send an email</strong>
+          <span>For private questions or if you don't have a GitHub account</span>
+          <code>owenunda@gmail.com</code>
+        </a>
+      </div>
+
+      <h2>What to include</h2>
+      <ul>
+        <li>Your Windows version. You'll find it in <strong>Settings › System › About</strong>.</li>
+        <li>Your NetBear version and whether you used the installer, the portable version or the Microsoft Store.</li>
+        <li>What the bear does and what you expected. A screenshot helps a lot.</li>
+      </ul>
+
+      <h2>Frequently asked questions</h2>
+
+      <p><strong>I can't see the bear on the taskbar</strong><br>
+      Windows may hide new icons. Click the <code>^</code> arrow next to the clock and drag the bear onto the taskbar, or turn it on in <strong>Settings › Personalization › Taskbar › Other system tray icons</strong>.</p>
+
+      <p><strong>I'm connected to Wi-Fi but the bear doesn't hibernate</strong><br>
+      The bear hibernates when no adapter has a default gateway. If your Wi-Fi is connected but the router has no internet, the bear stands still instead of hibernating.</p>
+
+      <p><strong>I use a VPN, WSL or Hyper-V</strong><br>
+      Virtual adapters without a default gateway don't count, so they don't double the speed or keep the bear awake without internet. USB tethering from your phone does count as a connection.</p>
+
+      <p><strong>Windows says "Windows protected your PC"</strong><br>
+      This happens with the GitHub download because the executable isn't signed yet. Choose <strong>More info</strong> and then <strong>Run anyway</strong>. The Microsoft Store version doesn't show this warning.</p>
+
+      <p><strong>I don't want it to start with Windows</strong><br>
+      Right-click the bear and uncheck <strong>Iniciar con Windows</strong> (start with Windows).</p>
+
+      <p><strong>How do I uninstall it</strong><br>
+      Go to <strong>Settings › Apps › Installed apps</strong>, find NetBear and choose <strong>Uninstall</strong>. If you use the portable version, close the app from its menu and delete the file.</p>
+
+      <p><strong>Does NetBear send my data anywhere?</strong><br>
+      No. The app doesn't connect to any server. The details are in the <a href="../privacy/">privacy policy</a>.</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>NetBear · MIT license</span>
+      <nav>
+        <a href="../privacy/">Privacy</a>
+        <a href="./">Support</a>
+        <a href="https://github.com/owenunda/NetBear">GitHub</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>
