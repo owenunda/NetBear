@@ -32,6 +32,27 @@ jobs:
       - name: Publish (Native AOT)
         run: dotnet publish src/NetBear/NetBear.csproj -c Release -r win-x64 -o artifacts/publish -p:Version=${{ env.NETBEAR_VERSION }}
 
+      # Paquete para Microsoft Store: va sin firmar, la Store lo firma al publicarlo.
+      - name: MSIX
+        shell: pwsh
+        run: |
+          $stage = 'artifacts/msix'
+          New-Item -ItemType Directory -Force "$stage/Assets" | Out-Null
+          Copy-Item packaging/msix/Assets/* "$stage/Assets"
+          Copy-Item artifacts/publish/NetBear.exe $stage
+          (Get-Content packaging/msix/AppxManifest.xml -Raw).Replace('$version$', "$env:NETBEAR_VERSION.0") |
+            Set-Content "$stage/AppxManifest.xml" -Encoding utf8
+          $makeappx = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\makeappx.exe" |
+            Sort-Object FullName -Descending | Select-Object -First 1
+          if (-not $makeappx) { throw "makeappx.exe no encontrado" }
+          & $makeappx.FullName pack /d $stage /p artifacts/NetBear.msix /o
+          if ($LASTEXITCODE) { throw "makeappx falló ($LASTEXITCODE)" }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NetBear-msix
+          path: artifacts/NetBear.msix
+
       - name: Portable zip
         if: github.ref_type == 'tag'
         shell: pwsh
@@ -56,3 +77,4 @@ jobs:
           files: |
             artifacts/NetBearSetup.exe
             artifacts/NetBear-portable.zip
+            artifacts/NetBear.msix

@@ -127,7 +127,10 @@ internal sealed unsafe class TrayIcon : IDisposable
         nint menu = CreatePopupMenu();
         AppendMenuW(menu, MF_STRING | MF_GRAYED, 0, _speedText);
         AppendMenuW(menu, MF_SEPARATOR, 0, null);
-        AppendMenuW(menu, MF_STRING | (Autostart.IsEnabled() ? MF_CHECKED : 0), CmdAutostart, "Iniciar con Windows");
+        if (Autostart.IsPackaged)
+            AppendMenuW(menu, MF_STRING, CmdAutostart, "Iniciar con Windows…");
+        else
+            AppendMenuW(menu, MF_STRING | (Autostart.IsEnabled() ? MF_CHECKED : 0), CmdAutostart, "Iniciar con Windows");
         AppendMenuW(menu, MF_STRING, CmdGitHub, "Ver en GitHub");
         AppendMenuW(menu, MF_STRING, CmdExit, "Salir");
 
@@ -139,6 +142,9 @@ internal sealed unsafe class TrayIcon : IDisposable
 
         switch (command)
         {
+            case CmdAutostart when Autostart.IsPackaged:
+                ShellExecuteW(0, "open", "ms-settings:startupapps", null, null, SW_SHOWNORMAL);
+                break;
             case CmdAutostart:
                 try { Autostart.Set(!Autostart.IsEnabled()); }
                 catch (Exception) { } // el estado queda como estaba
